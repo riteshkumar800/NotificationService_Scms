@@ -117,86 +117,7 @@
 // const API_URL = "http://localhost:5001/api";
 const API_URL = "http://localhost:8081/api";
 
-// // ======================
-// // SUPPLIER APIs
-// // ======================
 
-// export const getSuppliers = async () => {
-
-//   const response = await fetch(
-//     `${API_URL}/suppliers`
-//   );
-
-//   return response.json();
-
-// };
-
-// export const addSupplier = async (
-//   supplier: any
-// ) => {
-
-//   const response = await fetch(
-//     `${API_URL}/suppliers`,
-//     {
-//       method: "POST",
-
-//       headers: {
-//         "Content-Type":
-//           "application/json",
-//       },
-
-//       body: JSON.stringify(
-//         supplier
-//       ),
-//     }
-//   );
-
-//   return response.json();
-
-// };
-
-// export const updateSupplier = async (
-//   id: number,
-//   supplier: any
-// ) => {
-
-//   const response = await fetch(
-//     `${API_URL}/suppliers/${id}`,
-//     {
-//       method: "PUT",
-
-//       headers: {
-//         "Content-Type":
-//           "application/json",
-//       },
-
-//       body: JSON.stringify(
-//         supplier
-//       ),
-//     }
-//   );
-
-//   return response.json();
-
-// };
-
-// export const deleteSupplier = async (
-//   id: number
-// ) => {
-
-//   const response = await fetch(
-//     `${API_URL}/suppliers/${id}`,
-//     {
-//       method: "DELETE",
-//     }
-//   );
-
-//   return response.json();
-
-// };
-// ======================
-// SUPPLIER APIs
-// ======================
 
 export const getSuppliers = async () => {
 
@@ -302,6 +223,21 @@ export const deleteSupplier = async (
 // STORE APIs
 // ======================
 
+// export const getStores = async () => {
+
+//   const response = await fetch(
+//     `${API_URL}/stores`
+//   );
+
+//   if (!response.ok) {
+//     throw new Error(
+//       await response.text()
+//     );
+//   }
+
+//   return response.json();
+
+// };
 export const getStores = async () => {
 
   const response = await fetch(
@@ -508,220 +444,7 @@ export const deleteEmployee =
     return response.text();
 
   };
-// ======================
-// MATERIAL APIs
-// ======================
 
-// export const getMaterials =
-//   async () => {
-
-//     const response =
-//       await fetch(
-//         `${API_URL}/materials`
-//       );
-
-//     return response.json();
-
-//   };
-
-// export const addMaterial =
-//   async (
-//     material: any
-//   ) => {
-
-//     const response =
-//       await fetch(
-//         `${API_URL}/materials`,
-//         {
-//           method: "POST",
-
-//           headers: {
-//             "Content-Type":
-//               "application/json",
-//           },
-
-//           body: JSON.stringify(
-//             material
-//           ),
-//         }
-//       );
-
-//     return response.json();
-
-//   };
-
-// export const updateMaterial =
-//   async (
-//     id: number,
-//     material: any
-//   ) => {
-
-//     const response =
-//       await fetch(
-//         `${API_URL}/materials/${id}`,
-//         {
-//           method: "PUT",
-
-//           headers: {
-//             "Content-Type":
-//               "application/json",
-//           },
-
-//           body: JSON.stringify(
-//             material
-//           ),
-//         }
-//       );
-
-//     return response.json();
-
-//   };
-
-// export const deleteMaterial =
-//   async (
-//     id: number
-//   ) => {
-
-//     const response =
-//       await fetch(
-//         `${API_URL}/materials/${id}`,
-//         {
-//           method: "DELETE",
-//         }
-//       );
-
-//     return response.json();
-
-//   };
-// ======================
-// MATERIAL APIs
-// ======================
-
-// export const getMaterials = async () => {
-
-//   const response =
-//     await fetch(
-//       `${API_URL}/materials`
-//     );
-
-//   return response.text();
-
-// };
-// export const getMaterials =
-//   async () => {
-
-//     const response =
-//       await fetch(
-//         `${API_URL}/materials`
-//       );
-
-//     return response.json();
-
-//   };
-
-// export const addMaterial = async (
-//   material: any
-// ) => {
-
-//   const response =
-//     await fetch(
-//       `${API_URL}/materials`,
-//       {
-//         method: "POST",
-
-//         headers: {
-//           "Content-Type":
-//             "application/json",
-//         },
-
-//         body: JSON.stringify(
-//           material
-//         ),
-//       }
-//     );
-
-//   if (!response.ok) {
-//     throw new Error(
-//       await response.text()
-//     );
-//   }
-
-//   return response.text();
-
-// };
-
-// export const updateMaterial = async (
-//   id: number,
-//   material: any
-// ) => {
-
-//   const response =
-//     await fetch(
-//       `${API_URL}/materials/${id}`,
-//       {
-//         method: "PUT",
-
-//         headers: {
-//           "Content-Type":
-//             "application/json",
-//         },
-
-//         body: JSON.stringify(
-//           material
-//         ),
-//       }
-//     );
-
-//   if (!response.ok) {
-//     throw new Error(
-//       await response.text()
-//     );
-//   }
-
-//   return response.text();
-
-// };
-
-// // export const deleteMaterial = async (
-// //   id: number
-// // ) => {
-
-// //   const response =
-// //     await fetch(
-// //       `${API_URL}/materials/${id}`,
-// //       {
-// //         method: "DELETE",
-// //       }
-// //     );
-
-// //   if (!response.ok) {
-// //     throw new Error(
-// //       await response.text()
-// //     );
-// //   }
-
-// //   return response.text();
-
-// // };
-// export const deleteMaterial =
-//   async (
-//     id: number
-//   ) => {
-
-//     const response =
-//       await fetch(
-//         `${API_URL}/materials/${id}`,
-//         {
-//           method: "DELETE",
-//         }
-//       );
-
-//     return response.text();
-
-//   };
-// ======================
-// MATERIAL APIs
-// ======================
 
 export const getMaterials = async () => {
   const response = await fetch(
@@ -909,6 +632,15 @@ export const deleteManufacturer =
 
   };
   
+// export const getStores = async () => {
+//   const response = await fetch(`${API_URL}/stores`);
+
+//   if (!response.ok) {
+//     throw new Error("Failed to fetch stores");
+//   }
+
+//   return response.json();
+// };
 
   // ======================
 // MANUFACTURER APIs

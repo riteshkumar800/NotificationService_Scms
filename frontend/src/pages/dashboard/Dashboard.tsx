@@ -278,27 +278,101 @@ function Dashboard() {
   const [storeCount, setStoreCount] =
     useState(0);
 
-  useEffect(() => {
-    setSupplierCount(
-      getSupplierCount()
+  // useEffect(() => {
+  //   setSupplierCount(
+  //     getSupplierCount()
+  //   );
+
+  //   setMaterialCount(
+  //     getMaterialCount()
+  //   );
+
+  //   setManufacturerCount(
+  //     getManufacturerCount()
+  //   );
+
+  //   setEmployeeCount(
+  //     getEmployeeCount()
+  //   );
+
+  //   setStoreCount(
+  //     getStoreCount()
+  //   );
+  // }, []);
+//   useEffect(() => {
+
+//   const loadCounts =
+//     async () => {
+
+//       setSupplierCount(
+//         await getSupplierCount()
+//       );
+
+//       setMaterialCount(
+//         await getMaterialCount()
+//       );
+
+//       setManufacturerCount(
+//         await getManufacturerCount()
+//       );
+
+//       setEmployeeCount(
+//         await getEmployeeCount()
+//       );
+
+//       setStoreCount(
+//         await getStoreCount()
+//       );
+
+//     };
+
+//   loadCounts();
+
+// }, []);
+useEffect(() => {
+
+  const loadCounts =
+    async () => {
+
+      setSupplierCount(
+        await getSupplierCount()
+      );
+
+      setMaterialCount(
+        await getMaterialCount()
+      );
+
+      setManufacturerCount(
+        await getManufacturerCount()
+      );
+
+      setEmployeeCount(
+        await getEmployeeCount()
+      );
+
+      setStoreCount(
+        await getStoreCount()
+      );
+
+    };
+
+  loadCounts();
+
+  window.addEventListener(
+    "activityUpdated",
+    loadCounts
+  );
+
+  return () => {
+
+    window.removeEventListener(
+      "activityUpdated",
+      loadCounts
     );
 
-    setMaterialCount(
-      getMaterialCount()
-    );
+  };
 
-    setManufacturerCount(
-      getManufacturerCount()
-    );
-
-    setEmployeeCount(
-      getEmployeeCount()
-    );
-
-    setStoreCount(
-      getStoreCount()
-    );
-  }, []);
+}, []);
 
   return (
     <MainLayout>

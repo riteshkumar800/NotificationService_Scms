@@ -1,455 +1,279 @@
-````markdown
-# Supply Chain Management System (SCMS)
+# NotificationService SCMS
 
-A full-stack Supply Chain Management System developed using React, TypeScript, Spring Boot, PostgreSQL, and WebSocket technology. The system provides centralized management of Stores, Employees, Materials, Suppliers, Manufacturers, Notifications, and Realtime Stock Indent communication.
+A real-time Supply Chain Management System notification project built with Spring Boot, PostgreSQL, React, WebSocket/STOMP, SockJS, and RabbitMQ.
 
----
+The project manages supply-chain master data such as suppliers, stores, employees, materials, and manufacturers. It also supports real-time user notifications, online-user tracking, and an indent request approval flow.
 
-## Features
+## Project Summary
+
+This application combines normal REST-based CRUD operations with real-time communication.
+
+- REST APIs are used for master-data management.
+- WebSocket/STOMP is used for instant browser updates.
+- RabbitMQ is used for asynchronous event-based notifications.
+- PostgreSQL is used for persistent storage.
+- React TypeScript is used for the frontend dashboard.
+
+## Folder Structure
+
+```text
+NotificationService_Scms/
+├── backend/              # Node/Express event producer and sample APIs
+├── frontend/             # React + TypeScript frontend
+└── notificationService/  # Main Spring Boot backend
+```
+
+## Main Technologies
+
+| Area | Technology |
+| --- | --- |
+| Backend | Spring Boot |
+| Database | PostgreSQL |
+| ORM | Spring Data JPA / Hibernate |
+| Real-time communication | WebSocket, STOMP, SockJS |
+| Message queue | RabbitMQ |
+| Frontend | React, TypeScript, Vite |
+| Build tool | Maven |
+
+## Core Features
+
+- User registration and login
+- Captcha generation
+- Supplier CRUD
+- Store CRUD
+- Employee CRUD
+- Material CRUD
+- Manufacturer CRUD
+- Real-time user-specific notifications
+- Online user tracking
+- Real-time indent request flow
+- Approve/reject indent updates
+- RabbitMQ event consumption
+- PostgreSQL persistence
+
+## Architecture
+
+```text
+React Frontend
+   |
+   | REST API / WebSocket
+   v
+Spring Boot Controllers
+   |
+   v
+Service Layer
+   |
+   v
+Repository Layer
+   |
+   v
+PostgreSQL Database
+```
+
+Real-time notification flow:
+
+```text
+Frontend sends message to /app/sendMessage
+   |
+   v
+Spring Boot receives it using @MessageMapping
+   |
+   v
+Notification is saved in database
+   |
+   v
+SimpMessagingTemplate sends to /topic/notifications/{receiverId}
+   |
+   v
+Only the target user receives the notification
+```
+
+RabbitMQ event flow:
+
+```text
+Event producer sends JSON message
+   |
+   v
+RabbitMQ notification_queue
+   |
+   v
+Spring Boot RabbitMQConsumer
+   |
+   v
+WebSocket topic
+   |
+   v
+Frontend receives real-time event
+```
+
+## Important Spring Boot Files
+
+| File | Responsibility |
+| --- | --- |
+| `notificationService/src/main/java/com/demo/notification/NotificationApplication.java` | Starts the Spring Boot application |
+| `notificationService/src/main/resources/application.properties` | Database, server, and RabbitMQ configuration |
+| `notificationService/src/main/java/com/demo/notification/config/WebSocketConfig.java` | Configures WebSocket endpoint, STOMP broker, and SockJS |
+| `notificationService/src/main/java/com/demo/notification/config/RabbitMQConfig.java` | Creates RabbitMQ queue |
+| `notificationService/src/main/java/com/demo/notification/service/RabbitMQConsumer.java` | Reads RabbitMQ messages and sends WebSocket notifications |
+| `notificationService/src/main/java/com/demo/notification/controller/HomeController.java` | Handles notification, online user, and indent WebSocket flows |
+| `notificationService/src/main/java/com/demo/notification/service/OnlineUserService.java` | Tracks online users using `ConcurrentHashMap` |
+| `notificationService/src/main/java/com/demo/notification/controller/AuthController.java` | Handles register, login, and captcha APIs |
+
+## REST Modules
+
+The project follows a common layered structure:
+
+```text
+Controller -> Service -> Repository -> Entity -> Database
+```
+
+Example for suppliers:
+
+| Layer | File |
+| --- | --- |
+| Controller | `SupplierController.java` |
+| Service | `SupplierService.java` |
+| Repository | `SupplierRepository.java` |
+| Entity | `Supplier.java` |
+
+The same pattern is used for:
+
+- Employees
+- Stores
+- Materials
+- Manufacturers
+
+## API Endpoints
 
 ### Authentication
-- User Login
-- Captcha Verification
-- Session Management using Local Storage
-- Role-based User Access
 
-### Store Management
-- Add Store
-- View Stores
-- Update Store
-- Delete Store
-- Search and Filter Stores
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `POST` | `/auth/register` | Register user |
+| `POST` | `/auth/login` | Login user |
+| `GET` | `/auth/captcha` | Generate captcha |
 
-### Employee Management
-- Add Employee
-- View Employee Details
-- Update Employee Information
-- Delete Employee
-- Store-wise Employee Mapping
+### Suppliers
 
-### Material Management
-- Add Material
-- Update Material
-- Delete Material
-- Stock Monitoring
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/suppliers` | Get all suppliers |
+| `GET` | `/api/suppliers/{id}` | Get supplier by ID |
+| `POST` | `/api/suppliers` | Create supplier |
+| `PUT` | `/api/suppliers/{id}` | Update supplier |
+| `DELETE` | `/api/suppliers/{id}` | Delete supplier |
 
-### Supplier Management
-- Supplier Registration
-- Supplier CRUD Operations
+Similar CRUD endpoints exist for:
 
-### Manufacturer Management
-- Manufacturer Registration
-- Manufacturer CRUD Operations
+- `/api/stores`
+- `/api/employees`
+- `/api/materials`
+- `/api/manufacturers`
 
-### Notification System
-- Realtime Notifications
-- User-Specific Notification Delivery
+### Notifications
 
-### Indent Management
-- Create Indent Requests
-- Approve Indents
-- Reject Indents
-- Realtime Status Updates
-- User-to-User Communication
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/notifications` | Health/home response |
+| `GET` | `/notifications/all` | Get all notifications |
+| `POST` | `/notifications` | Create notification |
+| `PUT` | `/notifications/{id}` | Update notification |
+| `DELETE` | `/notifications/{id}` | Delete notification |
 
-### Online User Tracking
-- Realtime Online User Monitoring
-- Live User Status Updates
+## WebSocket Destinations
 
----
-
-# Technology Stack
-
-## Frontend
-
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- STOMP Client
-- SockJS
-
-## Backend
-
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- Spring WebSocket
-- Hibernate
-
-## Database
-
-- PostgreSQL
-
-## Realtime Communication
-
-- WebSocket
-- STOMP Protocol
-
----
-
-# System Architecture
+WebSocket endpoint:
 
 ```text
-                PostgreSQL
-                     ▲
-                     │
-              Repository Layer
-                     ▲
-                     │
-                Service Layer
-                     ▲
-                     │
-              Controller Layer
-                     ▲
-                     │
-        --------------------------------
-        │                              │
-        │                              │
-     REST APIs                   WebSocket
-        │                              │
-        ▼                              ▼
-
-React Frontend            Realtime Communication
-
-        ▲                              ▲
-        │                              │
-     CRUD APIs                 Notifications
-                               Online Users
-                               Indents
+http://localhost:8081/ws
 ```
 
----
+Client sends messages to:
 
-# Project Modules
+| Destination | Purpose |
+| --- | --- |
+| `/app/sendMessage` | Send user notification |
+| `/app/user/connect` | Register online user |
+| `/app/user/disconnect` | Remove online user |
+| `/app/sendIndent` | Send indent request |
+| `/app/approveIndent` | Approve indent |
+| `/app/rejectIndent` | Reject indent |
 
-## 1. User Module
+Client subscribes to:
 
-Responsible for:
+| Topic | Purpose |
+| --- | --- |
+| `/topic/notifications/{userId}` | User-specific notification |
+| `/topic/online-users` | Online users list |
+| `/topic/indent/{userId}` | User-specific indent updates |
 
-- Login Authentication
-- Captcha Validation
-- User Management
+## Database Configuration
 
----
-
-## 2. Store Module
-
-Stores information related to:
-
-- Store Code
-- Store Name
-- Location
-- Store Type
-- Manager Details
-- Contact Information
-
----
-
-## 3. Employee Module
-
-Stores information related to:
-
-- Employee Code
-- Employee Name
-- Designation
-- Department
-- Salary
-- Joining Date
-- Store Assignment
-
----
-
-## 4. Material Module
-
-Stores information related to:
-
-- Material Code
-- Material Name
-- Category
-- Unit
-- Quantity
-- Price
-
----
-
-## 5. Supplier Module
-
-Stores information related to:
-
-- Supplier Code
-- Supplier Name
-- Contact Person
-- GST Number
-- Address
-
----
-
-## 6. Manufacturer Module
-
-Stores information related to:
-
-- Manufacturer Code
-- Manufacturer Name
-- Contact Information
-- Website
-
----
-
-## 7. Notification Module
-
-Provides:
-
-- Realtime Notifications
-- User-Specific Notification Delivery
-- Read/Unread Tracking
-
----
-
-## 8. Indent Module
-
-Provides:
-
-- Realtime Indent Creation
-- Approval Workflow
-- Rejection Workflow
-- Status Tracking
-
----
-
-# Database Schema
-
-## Users
-
-```sql
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(100),
-    password VARCHAR(255),
-    role VARCHAR(50)
-);
-```
-
-## Stores
-
-```sql
-CREATE TABLE stores (
-    store_id BIGSERIAL PRIMARY KEY,
-    store_code VARCHAR(50),
-    store_name VARCHAR(255),
-    location VARCHAR(255),
-    store_type VARCHAR(50),
-    manager_name VARCHAR(255),
-    contact_number VARCHAR(20),
-    email VARCHAR(100),
-    status VARCHAR(20)
-);
-```
-
-## Employees
-
-```sql
-CREATE TABLE employees (
-    employee_id BIGSERIAL PRIMARY KEY,
-    employee_code VARCHAR(50),
-    employee_name VARCHAR(255),
-    designation VARCHAR(100),
-    department VARCHAR(100),
-    phone VARCHAR(20),
-    email VARCHAR(100),
-    address TEXT,
-    joining_date DATE,
-    salary DECIMAL(12,2),
-    store_id BIGINT,
-    status VARCHAR(20)
-);
-```
-
-## Materials
-
-```sql
-CREATE TABLE materials (
-    material_id BIGSERIAL PRIMARY KEY,
-    material_code VARCHAR(50),
-    material_name VARCHAR(255),
-    category VARCHAR(100),
-    unit VARCHAR(50),
-    price DECIMAL(12,2),
-    stock_quantity INTEGER,
-    status VARCHAR(20)
-);
-```
-
-## Suppliers
-
-```sql
-CREATE TABLE suppliers (
-    supplier_id BIGSERIAL PRIMARY KEY,
-    supplier_code VARCHAR(50),
-    supplier_name VARCHAR(255),
-    contact_person VARCHAR(255),
-    phone VARCHAR(20),
-    email VARCHAR(100),
-    address TEXT,
-    gst_number VARCHAR(50)
-);
-```
-
-## Manufacturers
-
-```sql
-CREATE TABLE manufacturers (
-    manufacturer_id BIGSERIAL PRIMARY KEY,
-    manufacturer_code VARCHAR(50),
-    manufacturer_name VARCHAR(255),
-    contact_person VARCHAR(255),
-    phone VARCHAR(20),
-    email VARCHAR(100),
-    address TEXT,
-    website VARCHAR(255)
-);
-```
-
-## Indents
-
-```sql
-CREATE TABLE indents (
-    indent_id VARCHAR(100) PRIMARY KEY,
-    sender_id BIGINT,
-    sender_name VARCHAR(255),
-    receiver_id BIGINT,
-    item_name VARCHAR(255),
-    quantity INTEGER,
-    priority VARCHAR(20),
-    timestamp TIMESTAMP,
-    status VARCHAR(20)
-);
-```
-
-## Notifications
-
-```sql
-CREATE TABLE notifications (
-    notification_id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT,
-    title VARCHAR(255),
-    message TEXT,
-    created_at TIMESTAMP,
-    is_read BOOLEAN DEFAULT FALSE
-);
-```
-
----
-
-# Realtime Workflow
-
-## Online User Flow
+Database settings are in:
 
 ```text
-User Login
-    ↓
-WebSocket Connect
-    ↓
-/app/user/connect
-    ↓
-Spring Boot
-    ↓
-ConcurrentHashMap
-    ↓
-Broadcast
-    ↓
-/topic/online-users
-    ↓
-All Clients Updated
+notificationService/src/main/resources/application.properties
 ```
 
----
+Example:
 
-## Indent Workflow
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/notification_db
+spring.datasource.username=riteshkumar
+spring.datasource.password=1234
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+server.port=8081
+```
+
+For production, credentials should be moved to environment variables.
+
+## RabbitMQ Configuration
+
+RabbitMQ settings:
+
+```properties
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=guest
+spring.rabbitmq.password=guest
+```
+
+Queue name:
 
 ```text
-User 1
-   ↓
-Create Indent
-   ↓
-WebSocket Publish
-   ↓
-/app/sendIndent
-   ↓
-Spring Boot
-   ↓
-Save to Database
-   ↓
-/topic/indent/{receiverId}
-   ↓
-User 2 Receives Instantly
+notification_queue
 ```
 
----
+The queue is configured in `RabbitMQConfig.java` and consumed by `RabbitMQConsumer.java`.
 
-## Indent Approval Workflow
+## How To Run
+
+### 1. Start PostgreSQL
+
+Create a database:
+
+```sql
+CREATE DATABASE notification_db;
+```
+
+Update `application.properties` with your PostgreSQL username and password.
+
+### 2. Start RabbitMQ
+
+RabbitMQ should be running locally on port `5672`.
+
+Default credentials:
 
 ```text
-Receiver
-   ↓
-Approve
-   ↓
-/app/approveIndent
-   ↓
-Database Update
-   ↓
-Broadcast Status
-   ↓
-Sender Receives Update
+username: guest
+password: guest
 ```
 
----
-
-# Design Principles Used
-
-- Layered Architecture
-- Separation of Concerns
-- Dependency Injection
-- Repository Pattern
-- Service Layer Pattern
-- RESTful API Design
-- Realtime Event Driven Communication
-
----
-
-# Installation
-
-## Clone Repository
+### 3. Run Spring Boot Backend
 
 ```bash
-git clone <repository-url>
-```
-
----
-
-## Frontend Setup
-
-```bash
-cd frontend
-
-npm install
-
-npm run dev
-```
-
-Frontend runs on:
-
-```text
-http://localhost:5173
-```
-
----
-
-## Backend Setup
-
-```bash
-cd backend
-
+cd notificationService
 ./mvnw spring-boot:run
 ```
 
@@ -459,68 +283,116 @@ Backend runs on:
 http://localhost:8081
 ```
 
----
+### 4. Run React Frontend
 
-## PostgreSQL Configuration
-
-Create database:
-
-```sql
-CREATE DATABASE scms;
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-Update:
+Frontend usually runs on:
 
-```properties
-application.properties
+```text
+http://localhost:5173
 ```
 
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/scms
-spring.datasource.username=postgres
-spring.datasource.password=password
+### 5. Optional: Run Node Backend/Event Producer
+
+```bash
+cd backend
+npm install
+npm start
 ```
 
----
+Node backend uses:
 
-# Future Enhancements
+```text
+http://localhost:5001
+```
 
-- JWT Authentication
-- Role Based Authorization
-- Email Notifications
-- RabbitMQ Integration
-- Redis Caching
-- Docker Deployment
-- Kubernetes Deployment
-- Analytics Dashboard
-- Audit Logging
+## Interview Explanation
 
----
+Short answer:
 
-# Learning Outcomes
+> This is a real-time Supply Chain Management notification system. It uses Spring Boot and PostgreSQL for backend data management, React TypeScript for the frontend, WebSocket/STOMP for real-time browser updates, and RabbitMQ for asynchronous event messaging. Users can manage suppliers, stores, employees, materials, and manufacturers, send real-time notifications, track online users, and raise or approve indents.
 
-Through this project, the following concepts were implemented and understood:
+Detailed answer:
 
-- React State Management
-- TypeScript Interfaces
-- REST APIs
-- Spring Boot Architecture
-- JPA & Hibernate
-- PostgreSQL Database Design
-- WebSocket Communication
-- STOMP Messaging
-- Realtime Event Processing
-- ConcurrentHashMap Usage
-- Layered Architecture
-- CRUD Operations
-- Authentication Flow
+> The project follows layered architecture. Controllers handle incoming REST and WebSocket requests. Services contain business logic such as setting default status, timestamps, saving notifications, and updating indent status. Repositories communicate with PostgreSQL through Spring Data JPA. For real-time notifications, the frontend connects to `/ws`, sends messages to `/app/...`, and subscribes to `/topic/...`. The backend uses `SimpMessagingTemplate` to send messages to specific users. RabbitMQ is used for asynchronous backend event handling, where messages are consumed from `notification_queue` and forwarded to the frontend through WebSocket.
 
----
+## Important Interview Questions
 
-# Author
+### What is the purpose of this project?
 
-**Ritesh Kumar**
+It manages supply-chain master data and provides real-time notifications for user actions, online users, and indent approvals.
 
-Supply Chain Management System (SCMS)
-Built using React, TypeScript, Spring Boot, PostgreSQL and WebSocket Technology.
-````
+### Why did you use WebSocket?
+
+WebSocket allows the server to push messages instantly to the browser without page refresh or repeated polling.
+
+### What is STOMP?
+
+STOMP is a messaging protocol used over WebSocket. In this project, clients send messages to `/app/...` and subscribe to `/topic/...`.
+
+### What is SockJS?
+
+SockJS provides fallback support if native WebSocket is unavailable or blocked.
+
+### Why did you use RabbitMQ?
+
+RabbitMQ is used for asynchronous event-based communication. It helps decouple event producers from the notification service.
+
+### Difference between RabbitMQ and WebSocket?
+
+RabbitMQ is mainly server-to-server asynchronous messaging. WebSocket is server-to-browser real-time communication.
+
+### Why use a service layer?
+
+The service layer keeps business logic separate from controller logic. This improves maintainability and testing.
+
+### Why use `ConcurrentHashMap` for online users?
+
+Multiple users can connect and disconnect at the same time. `ConcurrentHashMap` is thread-safe, so it avoids concurrency issues.
+
+### What happens if a user is offline?
+
+Current real-time WebSocket delivery works only when the user is connected. For better offline support, notifications should be stored with read/unread status and fetched when the user logs in.
+
+### Is authentication production-ready?
+
+No. Current authentication is basic. Production should use Spring Security, BCrypt password hashing, JWT tokens, role-based authorization, and secure token expiry.
+
+### Is `ddl-auto=update` good for production?
+
+No. It is useful during development. Production should use controlled migration tools like Flyway or Liquibase.
+
+### How would you improve this project?
+
+- Add Spring Security and JWT
+- Hash passwords with BCrypt
+- Add DTOs for all request/response models
+- Add validation using `@Valid`
+- Add global exception handling with `@ControllerAdvice`
+- Restrict CORS to trusted frontend URLs
+- Add unread notification support
+- Add RabbitMQ retry and dead-letter queue handling
+- Remove old commented code
+- Add unit and integration tests
+- Use environment variables for credentials
+
+## Production Considerations
+
+Before using this project in production, improve:
+
+- Security
+- Password handling
+- CORS rules
+- Error handling
+- Input validation
+- Database migration process
+- WebSocket authorization
+- Queue retry/dead-letter behavior
+- Logging and monitoring
+- Test coverage
+
